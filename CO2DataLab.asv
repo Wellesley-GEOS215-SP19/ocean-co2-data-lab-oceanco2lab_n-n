@@ -83,7 +83,7 @@ meanpCO2 = mean(pCO2Array,3);
 meanSST = mean(sstArray,3);
 figure(3); clf
 worldmap world
-contourfm(latgrid, longrid, meanpCO2','linecolor','none');
+contourfm(latgrid, lgrid, meanpCO2,'linecolor','none');
 colorbar
 geoshow('landareas.shp','FaceColor','black')
 title('Mean Annual pCO2 in Surface Water (uatm)')
