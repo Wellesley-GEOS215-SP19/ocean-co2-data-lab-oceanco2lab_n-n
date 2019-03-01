@@ -24,6 +24,7 @@ monthgrid = unique(CO2data.MONTH) %<-- following the same approach, find all uni
 pCO2Array = NaN*zeros(length(longrid),length(latgrid), length(monthgrid));
 sstArray = NaN*zeros(length(longrid),length(latgrid), length(monthgrid));
 
+pCO2BATind = NaN*zeros(1,2);
 
 
 %% 2b. Pull out the seawater pCO2 (PCO2_SW) and sea surface temperature (SST)
@@ -41,6 +42,11 @@ for i = 1:height(CO2data)
     pCO2Array(indexLon,indexLat,indexMonth) = PCO2_SW;
     sstArray(indexLon,indexLat,indexMonth) = sst_SW;
     
+    if lat == 36 & lon == 232.5
+        %pCO2BATind = (indexLon,indexLat);
+       
+    end 
+        
     
 end   
 
