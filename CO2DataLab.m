@@ -9,13 +9,13 @@
 % Hint: you can again use the function “readtable”, and use your first data lab code as an example.
 %<--
 filename = 'LDEO_GriddedCO2_month_flux_2006c.csv'
-CO2data = readtable(filename)
+CO2data = readtable(filename);
 %% 2a. Create new 3-dimensional arrays to hold reshaped data
 %Find each unique longitude, latitude, and month value that will define
 %your 3-dimensional grid
 longrid = unique(CO2data.LON); %finds all unique longitude values
-latgrid = unique(CO2data.LAT) %<-- following the same approach, find all unique latitude values
-monthgrid = unique(CO2data.MONTH) %<-- following the same approach, find all unique months
+latgrid = unique(CO2data.LAT); %<-- following the same approach, find all unique latitude values
+monthgrid = unique(CO2data.MONTH); %<-- following the same approach, find all unique months
 
 %Create empty 3-dimensional arrays of NaN values to hold your reshaped data
     %You can make these for any variables you want to extract - for this
@@ -39,9 +39,7 @@ for i = 1:height(CO2data)
     indexLat = find(latgrid == lat);
     indexMonth = find(monthgrid == month);
     pCO2Array(indexLon,indexLat,indexMonth) = PCO2_SW;
-    sstArray(indexLon,indexLat,indexMonth) = sst_SW;
-    
-    
+    sstArray(indexLon,indexLat,indexMonth) = sst_SW;    
 end   
 
 %% 3a. Make a quick plot to check that your reshaped data looks reasonable
@@ -50,8 +48,8 @@ end
 %will have to pick one at a time to check - i.e. this example is just for
 %January
 
-imagesc(sstArray(:,:,1))
-imagesc(pCO2Array(:,:,1))
+imagesc(sstArray(:,:,1));
+imagesc(pCO2Array(:,:,1));
 
 %% 3b. Now pretty global maps of one month of each of SST and pCO2 data.
 %I have provided example code for plotting January sea surface temperature
@@ -103,10 +101,38 @@ pCO2_T = repmat(meanpCO2, [1 1 12]).^(0.0423*(sstArray - (repmat(meanSST,[1 1 12
 %% 7. Pull out and plot the seasonal cycle data from stations of interest
 %Do for BATS, Station P, and Ross Sea (note that Ross Sea is along a
 %section of 14 degrees longitude - I picked the middle point)
+%at each location, we need the pCO2_BP, pCO2_T, and pCO2Array values over
+%the season
+BATSdata = NaN*zeros(12,3);
+indexLonBATS = find(longrid == 312.5);
+indexLatBATS = find(latgrid == 32);
 
-%<--
+RossData = NaN*zeros(12,3);
+indexLonRoss = find(longrid == 177.5);
+indexLatRoss = find(latgrid == -76);
+
+Pdata = NaN*zeros(12,3);
+indexLonP = find(longrid == 217.5);
+indexLatP = find(latgrid == 48);
+for i = 1:12
+    BATSdata(i,1) = pCO2_BP(indexLonBATS, indexLatBATS,i);
+    BATSdata(i,2) = pCO2_T(indexLonBATS, indexLatBATS,i);
+    BATSdata(i,3) = pCO2Array(indexLonBATS, indexLatBATS,i);
+    
+    RossData(i,1) = pCO2_BP(indexLonRoss, indexLatRoss,i);
+    RossData(i,2) = pCO2_T(indexLonRoss, indexLatRoss,i);
+    RossData(i,3) = pCO2Array(indexLonRoss, indexLatRoss,i);
+    
+    Pdata(i,1) = pCO2_BP(indexLonP, indexLatP,i);
+    Pdata(i,2) = pCO2_T(indexLonP, indexLatP,i);
+    Pdata(i,3) = pCO2Array(indexLonP, indexLatP,i);
+end 
 
 
+% station = actual cordinates -> closest in the data
+%BATS = 32.5, 296 -> 32,312.5
+%Ross = -76.5, 176 -> -76,177.5
+%Station P = 50, 216-> 48, 217.5
 %% 8. Reproduce your own versions of the maps in figures 7-9 in Takahashi et al. 2002
 % But please use better colormaps!!!
 % Mark on thesese maps the locations of the three stations for which you plotted the
