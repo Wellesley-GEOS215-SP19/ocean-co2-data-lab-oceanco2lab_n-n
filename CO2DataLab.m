@@ -21,10 +21,9 @@ monthgrid = unique(CO2data.MONTH); %<-- following the same approach, find all un
     %You can make these for any variables you want to extract - for this
     %lab you will need PCO2_SW (seawater pCO2) and SST (sea surface
     %temperature)
+    
 pCO2Array = NaN*zeros(length(longrid),length(latgrid), length(monthgrid));
 sstArray = NaN*zeros(length(longrid),length(latgrid), length(monthgrid));
-
-
 
 %% 2b. Pull out the seawater pCO2 (PCO2_SW) and sea surface temperature (SST)
 %data and reshape it into your new 3-dimensional arrays
@@ -59,17 +58,19 @@ imagesc(pCO2Array(:,:,1));
 figure(1); clf
 worldmap world
 contourfm(latgrid, longrid, sstArray(:,:,1)','linecolor','none');
-colorbar
 geoshow('landareas.shp','FaceColor','black')
 title('January Sea Surface Temperature (^oC)')
+c = colorbar;
+c.Label.String = 'Temp (°C)'
 
 
 figure(2); clf
 worldmap world
 contourfm(latgrid, longrid, pCO2Array(:,:,1)','linecolor','none');
-colorbar
 geoshow('landareas.shp','FaceColor','black')
-title('January pCO2 in Surface Water (uatm)')
+title('January pCO2 in Surface Water (\muatm)')
+c = colorbar
+c.Label.String = 'pCO2 (\muatm)'
 
 %Check that you can make a similar type of global map for another month
 %and/or for pCO2 using this approach. Check the documentation and see
@@ -82,21 +83,35 @@ title('January pCO2 in Surface Water (uatm)')
 %<-- 
 meanpCO2 = mean(pCO2Array,3);
 meanSST = mean(sstArray,3);
+
 figure(3); clf
 worldmap world
 contourfm(latgrid, longrid, meanpCO2','linecolor','none');
 colorbar
 geoshow('landareas.shp','FaceColor','black')
-title('Mean Annual pCO2 in Surface Water (uatm)')
+title('Mean Annual pCO2 in Surface Water (\muatm)')
+c = colorbar
+c.Label.String = 'pCO2 (\muatm)'
 
 %% 5. Calculate and plot a global map of the difference between the annual mean seawater and atmosphere pCO2
-%<--
+%<--source: https://www.esrl.noaa.gov/gmd/ccgg/trends/data.html
+pCO2atmo = 369.55; 
+pCO2dif = meanpCO2 - pCO2atmo;
 
-
+figure(11); clf
+worldmap world
+contourfm(latgrid, longrid, pCO2dif','linecolor','none');
+colorbar
+geoshow('landareas.shp','FaceColor','black')
+title('Difference between the Annual Mean Seawater and Atmosphere pCO2 (\muatm)')
+c = colorbar
+c.Label.String = 'pCO2 difference(\muatm)'
+cmap = cmocean('balance','pivot',0)
+colormap(cmap)
 %% 6. Calculate relative roles of temperature and of biology/physics in controlling seasonal cycle
 %<--
-pCO2_BP = pCO2Array.^(0.0423*(repmat(meanSST,[1 1 12]))-sstArray);
-pCO2_T = repmat(meanpCO2, [1 1 12]).^(0.0423*(sstArray - (repmat(meanSST,[1 1 12]))));
+pCO2_BP = pCO2Array.*exp(0.0423*((repmat(meanSST,[1 1 12]))-sstArray));
+pCO2_T = repmat(meanpCO2, [1 1 12]).*exp(0.0423*(sstArray - (repmat(meanSST,[1 1 12]))));
 
 %% 7. Pull out and plot the seasonal cycle data from stations of interest
 %Do for BATS, Station P, and Ross Sea (note that Ross Sea is along a
@@ -114,6 +129,8 @@ indexLatRoss = find(latgrid == -76);
 Pdata = NaN*zeros(12,3);
 indexLonP = find(longrid == 217.5);
 indexLatP = find(latgrid == 48);
+
+months = NaN*zeros(12,1);
 for i = 1:12
     BATSdata(i,1) = pCO2_BP(indexLonBATS, indexLatBATS,i);
     BATSdata(i,2) = pCO2_T(indexLonBATS, indexLatBATS,i);
@@ -126,16 +143,77 @@ for i = 1:12
     Pdata(i,1) = pCO2_BP(indexLonP, indexLatP,i);
     Pdata(i,2) = pCO2_T(indexLonP, indexLatP,i);
     Pdata(i,3) = pCO2Array(indexLonP, indexLatP,i);
+    
+    months(i,1) = i;
 end 
 
+figure(5); clf
+hold on
+plot(months,BATSdata(:,1))
+plot(months,BATSdata(:,2))
+plot(months,BATSdata(:,3))
+legend('BP','T','Obs')
+title('Seasonal Cylce observed at BATS')
+hold off
+
+figure(6); clf
+hold on
+plot(months,RossData(:,1))
+plot(months,RossData(:,2))
+plot(months,RossData(:,3))
+legend('BP','T','Obs')
+title('Seasonal Cylce observed in Ross Sea')
+hold off
+
+figure(7); clf
+hold on
+plot(months,Pdata(:,1))
+plot(months,Pdata(:,2))
+plot(months,Pdata(:,3))
+legend('BP','T','Obs')
+title('Seasonal Cylce observed at Station Papa')
+hold off
 
 % station = actual cordinates -> closest in the data
 %BATS = 32.5, 296 -> 32,312.5
 %Ross = -76.5, 176 -> -76,177.5
 %Station P = 50, 216-> 48, 217.5
+latsta = [32,-76,48];
+lonsta = [312.5, 177.5,217.5];
 %% 8. Reproduce your own versions of the maps in figures 7-9 in Takahashi et al. 2002
 % But please use better colormaps!!!
 % Mark on thesese maps the locations of the three stations for which you plotted the
 % seasonal cycle above
+bpAmp = max(pCO2_BP, [],3) - min(pCO2_BP,[],3);
+tempAmp = max(pCO2_T,[],3) - min(pCO2_T,[],3);
+ampRatio = tempAmp./bpAmp;
 
-%<--
+figure(8); clf
+worldmap world
+contourfm(latgrid, longrid, bpAmp','linecolor','none');
+colorbar
+geoshow('landareas.shp','FaceColor','black')
+title('Seasonal BioPhysical Effects of Seawater pCO2')
+scatterm(latsta,lonsta,50,'r','filled');
+c = colorbar
+c.Label.String = 'pCO2(\muatm)'
+
+figure(9); clf
+worldmap world
+contourfm(latgrid, longrid, tempAmp','linecolor','none');
+colorbar
+geoshow('landareas.shp','FaceColor','black')
+title('Seasonal Temperature Effects of Seawater pCO2')
+c = colorbar
+c.Label.String = 'pCO2(\muatm)'
+
+figure(10); clf
+worldmap world
+contourfm(latgrid, longrid, ampRatio','linecolor','none');
+colorbar
+geoshow('landareas.shp','FaceColor','black')
+title('Which one is stronger? BP or T? pCO2')
+c = colorbar
+c.Label.String = 'pCO2 ratio(\muatm)'
+cmap = cmocean('balance','pivot',1);
+colormap(cmap);
