@@ -61,7 +61,7 @@ contourfm(latgrid, longrid, sstArray(:,:,1)','linecolor','none');
 geoshow('landareas.shp','FaceColor','black')
 title('January Sea Surface Temperature (^oC)')
 c1 = colorbar;
-c1.Label.String = 'Temp (°C)'
+c1.Label.String = 'Temp (°C)';
 
 
 figure(2); clf
@@ -70,7 +70,7 @@ contourfm(latgrid, longrid, pCO2Array(:,:,1)','linecolor','none');
 geoshow('landareas.shp','FaceColor','black')
 title('January pCO2 in Surface Water (\muatm)')
 c2 = colorbar;
-c2.Label.String = 'pCO2 (\muatm)'
+c2.Label.String = 'pCO2 (\muatm)';
 
 %Check that you can make a similar type of global map for another month
 %and/or for pCO2 using this approach. Check the documentation and see
@@ -87,10 +87,10 @@ meanSST = mean(sstArray,3);
 figure(3); clf
 worldmap world
 contourfm(latgrid, longrid, meanpCO2','linecolor','none');
-% colorbar
-c3 = colorbar;
-c3.Label.String = 'pCO2 (\muatm)'
+colorbar
 geoshow('landareas.shp','FaceColor','black')
+c3 = colorbar;
+c3.Label.String = 'pCO2 (\muatm)';
 title('Mean Annual pCO2 in Surface Water (\muatm)')
 
 %% 5. Calculate and plot a global map of the difference between the annual mean seawater and atmosphere pCO2
@@ -105,7 +105,7 @@ colorbar
 geoshow('landareas.shp','FaceColor','black')
 title('Difference between the Annual Mean Seawater and Atmosphere pCO2 (\muatm)')
 c11 = colorbar;
-c11.Label.String = 'pCO2 difference(\muatm)'
+c11.Label.String = 'pCO2 difference(\muatm)';
 cmap = cmocean('balance','pivot',0);
 colormap(cmap)
 %% 6. Calculate relative roles of temperature and of biology/physics in controlling seasonal cycle
@@ -147,31 +147,45 @@ for i = 1:12
     months(i,1) = i;
 end 
 
+
 figure(5); clf
+subplot(3,1,1)
+set(gcf, 'Position', [500 500 500 900])
 hold on
 plot(months,BATSdata(:,1),'b-o','MarkerFaceColor','b','MarkerSize',7,'Linewidth',3)
 plot(months,BATSdata(:,2),'g-o','MarkerFaceColor','g','MarkerSize',7,'Linewidth',3)
 plot(months,BATSdata(:,3),'m-o','MarkerFaceColor','m','MarkerSize',7,'Linewidth',3)
-legend('Bio-physical Effects on pCO2','Temperature Effects on pCO2','Observed Seawater pCO2','Position',[0.3 0.85 0 0])
+legend('pCO_2, Biophysical','pCO_2, Temperature','Observed pCO_2','Position',[0.25 0.89 0 0])
+xlim([0 12.2])
 title('Seasonal Cylce of pCO2 Observed at BATS')
+xlabel('Month')
+ylabel('pCO_2(\muatm)')
 hold off
 
-figure(6); clf
+% figure(6); clf
+subplot(3,1,2)
 hold on
 plot(months,RossData(:,1),'b-o','MarkerFaceColor','b','MarkerSize',7,'Linewidth',3)
 plot(months,RossData(:,2),'g-o','MarkerFaceColor','g','MarkerSize',7,'Linewidth',3)
 plot(months,RossData(:,3),'m-o','MarkerFaceColor','m','MarkerSize',7,'Linewidth',3)
-legend('Bio-physical Effects on pCO2','Temperature Effects on pCO2','Observed Seawater pCO2')
+legend('pCO_2, Biophysical','pCO_2, Temperature','Observed pCO_2','Position',[0.5 0.47 0 0])
+xlim([0 12.2])
 title('Seasonal Cylce of pCO2 Observed in Ross Sea')
+xlabel('Month')
+ylabel('pCO_2(\muatm)')
 hold off
 
-figure(7); clf
+% figure(7); clf
+subplot(3,1,3)
 hold on
 plot(months,Pdata(:,1),'b-o','MarkerFaceColor','b','MarkerSize',7,'Linewidth',3)
 plot(months,Pdata(:,2),'g-o','MarkerFaceColor','g','MarkerSize',7,'Linewidth',3)
 plot(months,Pdata(:,3),'m-o','MarkerFaceColor','m','MarkerSize',7,'Linewidth',3)
-legend('Bio-physical Effects on pCO2','Temperature Effects on pCO2','Observed Seawater pCO2')
-title('Seasonal Cylce of pCO2 Observed at Station Papa')
+legend('pCO_2, Biophysical','pCO_2, Temperature','Observed pCO_2','Position',[0.25 0.3 0 0])
+xlim([0 12.2])
+title('Seasonal Cylce of pCO_2 Observed at Station Papa')
+xlabel('Month')
+ylabel('pCO_2(\muatm)')
 hold off
 
 % station = actual cordinates -> closest in the data
@@ -196,7 +210,7 @@ geoshow('landareas.shp','FaceColor','black')
 title('Seasonal BioPhysical Effects of Seawater pCO2')
 scatterm(latsta,lonsta,50,'r','filled');
 c8 = colorbar;
-c8.Label.String = 'pCO2(\muatm)'
+c8.Label.String = 'pCO_2(\muatm)';
 
 figure(9); clf
 worldmap world
@@ -205,14 +219,15 @@ colorbar
 geoshow('landareas.shp','FaceColor','black')
 title('Seasonal Temperature Effects of Seawater pCO2')
 c9 = colorbar;
-c9.Label.String = 'pCO2(\muatm)'
+c9.Label.String = 'pCO_2(\muatm)';
 
 figure(10); clf
 worldmap world
 contourfm(latgrid, longrid, ampRatio','linecolor','none');
+colorbar
 geoshow('landareas.shp','FaceColor','black')
-title('Temperature and Biophysical Effect on pCO2 Ratio')
+title('Temperature and Biophysical Effect on pCO_2 Ratio')
 c10 = colorbar;
-c10.Label.String = 'pCO2 ratio(\muatm)'
+c10.Label.String = 'pCO_2 ratio(\muatm)';
 cmap = cmocean('balance','pivot',1);
 colormap(cmap);
