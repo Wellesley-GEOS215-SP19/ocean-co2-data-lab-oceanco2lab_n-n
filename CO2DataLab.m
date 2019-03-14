@@ -231,3 +231,15 @@ c10 = colorbar;
 c10.Label.String = 'pCO_2 ratio(\muatm)';
 cmap = cmocean('balance','pivot',1);
 colormap(cmap);
+
+%%
+%Figure 6 attempt
+
+maxpCO2 = max(pCO2Array,[],3);
+minpCO2 = min(pCO2Array,[],3);
+pCO2Amp = maxpCO2 - minpCO2;
+for i=1:40
+if maxpCO2(:,i) < meanpCO2(:,i)
+    pCO2Amp(:,i) = pCO2Amp(:,i)*-1;
+end
+end
