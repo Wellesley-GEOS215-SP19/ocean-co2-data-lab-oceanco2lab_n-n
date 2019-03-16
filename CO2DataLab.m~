@@ -238,19 +238,23 @@ colormap(cmap);
 maxpCO2 = max(pCO2Array,[],3);
 minpCO2 = min(pCO2Array,[],3);
 pCO2Amp = maxpCO2-minpCO2;
-meanAnTemp = 8.34;
 
 for row=1:size(pCO2Amp,1)
     for col=1:size(pCO2Amp,2)
-if meanSST(row,col) < meanAnTemp
+if maxpCO2(row,col) < meanpCO2(row,col)
     pCO2Amp(row,col) = pCO2Amp(row,col)*-1;
+    disp('yes')
+else
+    pCO2Amp(row,col) = pCO2Amp(row,col);
+    disp('no')
 end
     end
 end
 
-figure(12); clf
-worldmap world
-contourfm(latgrid, longrid, pCO2Amp','linecolor','none');
-geoshow('landareas.shp','FaceColor','black')
-title('Seasonal Mean Monthly Amplitude of pCO2 in Seawater')
-colorbar
+if meanSST
+% figure(12); clf
+% worldmap world
+% contourfm(latgrid, longrid, pCO2Amp','linecolor','none');
+% geoshow('landareas.shp','FaceColor','black')
+% title('Figure 6')
+% colorbar
